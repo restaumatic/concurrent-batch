@@ -15,7 +15,7 @@ module Control.Concurrent.STM.Batch
 import Data.Maybe (isJust, fromJust)
 import System.Clock
 import Control.Concurrent (forkIO, threadDelay)
-import Control.Monad (void, when, forever, unless)
+import Control.Monad (void, when, forever, unless, forM_)
 import Control.Concurrent.STM
 import Control.Concurrent.STM.TVar
 import Control.Concurrent.STM.TMVar
@@ -55,7 +55,7 @@ newBatch batchLimit' batchTimeout' batchHandler' = do
       , batchHandler = batchHandler'
       }
 
-  when (isJust batchTimeout') $ void $ forkIO $ timeoutHandler batch
+  forM_ batchTimeout' $ \batchTimeout'' -> void $ forkIO $ timeoutHandler batchTimeout'' batch
 
   return batch
 
@@ -84,8 +84,8 @@ writeBatch ctx item = do
     now <- getTime Monotonic
     atomically $ putTMVar (batchStarted ctx) now
 
-timeoutHandler :: Batch a -> IO ()
-timeoutHandler ctx = let timeout = fromJust (batchTimeout ctx) in forever $ do
+timeoutHandler :: TimeSpec -> Batch a -> IO ()
+timeoutHandler timeout ctx = forever $ do
   now <- getTime Monotonic
   started <- atomically $ tryReadTMVar $ batchStarted ctx
   case started of
@@ -107,4 +107,4 @@ fromMicroSecs :: Integer -> TimeSpec
 fromMicroSecs ts = fromNanoSecs $ 1000 * ts
 
 toMicroSecs :: TimeSpec -> Integer
-toMicroSecs ts = 1000 `quot` toNanoSecs ts
+toMicroSecs ts = toNanoSecs ts `quot` 1000

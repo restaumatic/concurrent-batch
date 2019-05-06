@@ -1,12 +1,16 @@
--- This file has been generated from package.yaml by hpack version 0.28.2.
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.1.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d90ca61a5ff6d881c3770c5c3393e8be89c51c98ae5bca93db71bf0293b6d3f5
+-- hash: 58e8e6493fbb41718ceb3314c2553fb88c69d9388dbef307b1b8d21058b4d0e8
 
 name:           concurrent-batch
 version:        0.1.0.0
+synopsis:       Concurrent batching queue based on STM with timeout.
 description:    Please see the README on GitHub at <https://github.com/harporoeder/concurrent-batch#readme>
+category:       Data
 homepage:       https://github.com/harporoeder/concurrent-batch#readme
 bug-reports:    https://github.com/harporoeder/concurrent-batch/issues
 author:         Harpo Roeder
@@ -15,7 +19,6 @@ copyright:      2018 Harpo Roeder
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
-cabal-version:  >= 1.10
 extra-source-files:
     README.md
 
