@@ -87,12 +87,10 @@ writeBatch ctx item = do
 timeoutHandler :: TimeSpec -> Batch a -> IO ()
 timeoutHandler timeout ctx = forever $ do
   now <- getTime Monotonic
-  started <- atomically $ tryReadTMVar $ batchStarted ctx
-  case started of
-    Nothing -> threadDelay $ fromIntegral $ toMicroSecs now
-    Just t  -> if now - t < timeout
-      then threadDelay $ fromIntegral $ toMicroSecs $ timeout + t - now
-      else atomically $ flushBatch ctx
+  t <- atomically $ readTMVar $ batchStarted ctx
+  if now - t <= timeout
+    then threadDelay $ fromIntegral $ toMicroSecs $ now - t + timeout
+    else atomically $ flushBatch ctx
 
 -- | Convenience function for timeout in milliseconds.
 fromMilliSecs :: Integer -> TimeSpec
